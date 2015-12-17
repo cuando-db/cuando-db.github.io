@@ -16,7 +16,42 @@
     </section>
 
     <section class="main-content">
-      <h1>
+      <p>Cuando is system that integrates information over time and resolves conflicts using user-defined preferences. We used it to build historical profiles of security ownership by corporate executives and board members using public SEC data.</p>
+
+<h1>
+<a id="command-line-interface" class="anchor" href="#command-line-interface" aria-hidden="true"><span class="octicon octicon-link"></span></a>Command-line Interface</h1>
+
+<p>We have implemented a command-line interface (CLI) that takes user input and passes it to the Cuando API. This interface is used to perform the experiments discussed in Section. The interface offers three commands: <code>init</code> accepts an archive name and three JSON documents describing the schema, resolution dimensions, and preference rules,
+respectively. The <code>merge</code> command accepts an archive name and a single JSON document describing the information to be integrated into the archive. Finally,the <code>query</code> command accepts an archive name and a single JSON document describing the query.</p>
+
+<h1>
+<a id="queries" class="anchor" href="#queries" aria-hidden="true"><span class="octicon octicon-link"></span></a>Queries</h1>
+
+<p>Cuando queries are made up of an archive name and three clauses: project, select, and timeslice. Cuando uses the archive name to retrieve the schema from the archive’s metadata, and to direct MongoDB to query the correct set of documents.</p>
+
+<p>The project clause is used to prune parts of documents from the result. It consists of a set of paths:</p>
+
+<pre><code>[path $P_1$, path $P_2$, ..., path $P_n$]
+</code></pre>
+
+<p>The documents in the result are pruned so that only the paths (and their descendants) in this clause appear in the result. By default, the set of paths is populated by all paths in the schema, which means documents are not pruned. For instance, our SEC documents have two subtrees, one for transactions (<code>/securities/</code>) and another for corporate relationships (<code>corporateRelationships</code>). When we want to see only transactions in the query result, our project clause becomes: <code>[ /securities/ ]</code>.</p>
+
+<p>The select clause is used to include only matching documents in the result. It consists of a set of tuples:</p>
+
+<pre><code>[(path $P_1$, value $V_1$), ..., (path $P_n$, value $V_n$)]
+</code></pre>
+
+<p>Each path must have the SetOf type. Only those Records whose key matches the value is returned. The following select clause will find Freddy Gold’s document in our SEC archive:
+<code>[ (/reportingOwner/rptOwnerName/, Freddy Gold) ]</code>.</p>
+
+<p>The timeslice clause is used to limit query results to information considered true within the temporal interval on a particular temporal dimension. It consists of a single tuple:</p>
+
+<pre><code>(dimension $D$, start time $T_s$, end time $T_e$)
+</code></pre>
+
+<p>Because temporal intervals are closed-open by convention, the start time must be strictly less than the end time. For example, to return only information during the 2012 US fiscal year, which runs from October 1, 2011 to September 30, 2012, we specify <code>(2011-11-01, 2012-11-01)</code></p>
+
+<h1>
 <a id="deploying" class="anchor" href="#deploying" aria-hidden="true"><span class="octicon octicon-link"></span></a>Deploying</h1>
 
 <p>See the repo for details: <a href="https://github.com/cuando-db/cuando-db">https://github.com/cuando-db/cuando-db</a></p>
@@ -25,6 +60,11 @@
 <a id="sec-data" class="anchor" href="#sec-data" aria-hidden="true"><span class="octicon octicon-link"></span></a>SEC Data</h1>
 
 <p>Available via figshare: <a href="http://figshare.com/articles/Cuando_SEC_Data/1603884">http://figshare.com/articles/Cuando_SEC_Data/1603884</a></p>
+
+<h1>
+<a id="acknowledgments" class="anchor" href="#acknowledgments" aria-hidden="true"><span class="octicon octicon-link"></span></a>Acknowledgments</h1>
+
+<p>This work was supported by NFS grants 1524382, 1450560, and an AWS in Education Research Grant award.</p>
 
       <footer class="site-footer">
 
